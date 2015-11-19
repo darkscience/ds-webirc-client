@@ -1,3 +1,44 @@
 @import (inline) "normalize.css";
 @import (inline) "normalize-opentype.css";
+@import url(https://bootswatch.com/cyborg/variables.less);
 @import "bootstrap/bootstrap.less";
+
+// TODO: Get rid of the Bootstrap grid layout and redo the whole thing with
+// flex.
+
+.messages-container {
+  height: 50rem;
+  overflow-y: scroll;
+}
+
+.message-container {
+  margin: 0.5em 0 0 0;
+  font-family: "Anonymous Pro", monospace;
+  display: flex;
+  flex-direction: horizontal;
+
+  &.message-type-notice {
+    font-style: italic;
+  }
+
+  .message-gutter {
+    text-align: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 15%;
+
+    .timestamp {
+      display: block;
+      font-size: 0.75em;
+    }
+  }
+
+  .message {
+    flex-grow: 2;
+  }
+}
+
+.message-gutter {
+  border-right: @gray;
+  padding: 0 1em 0 0;
+}

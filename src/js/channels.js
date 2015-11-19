@@ -8,6 +8,6 @@ export function createChannel(type, name, topic, users=[]) {
     type,
     name,
     topic,
-    users: Immutable.List.of(users)
+    names: Immutable.List.of(users)
   });
 }

@@ -14,7 +14,7 @@ let defaultState = {
   },
   messages: []
 };
-defaultState.channels.active = createChannel('phony', 'Phony');
+defaultState.channels.active = createChannel('network', 'Network');
 defaultState.channels.joined.push(defaultState.channels.active);
 defaultState = Immutable.fromJS(defaultState);
 

@@ -3,10 +3,16 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import React from 'react';
 import Chat from './Chat';
+import ChannelActions from '../actions/channels';
 
 class AppBase extends React.Component {
   constructor() {
     super();
+  }
+
+  onChannelClick(e, name) {
+    e.preventDefault();
+    this.props.activateChannel(name);
   }
 
   renderChannelList() {
@@ -17,7 +23,8 @@ class AppBase extends React.Component {
           'active': chan == this.props.activeChannel
         });
         const name = chan.get('name');
-        return <a href="" key={name} className={cls}>{name}</a>;
+        return <a href="" key={name} className={cls}
+          onClick={(e) => this.onChannelClick(e, name)}>{name}</a>;
       });
       return <div className="list-group">
         {channelListItems}
@@ -48,13 +55,15 @@ class AppBase extends React.Component {
   }
 }
 
+const actionCreators = {
+  activateChannel: ChannelActions.activate
+};
+
 const App = connect(state => {
   return {
     activeChannel: state.getIn(['channels', 'active']),
     channels: state.getIn(['channels', 'joined'])
   };
-}, state => {
-  return {};
-})(AppBase);
+}, actionCreators)(AppBase);
 
 export default App;

@@ -21,6 +21,7 @@
     "normalize-opentype.css": "^0.2.4",
     "normalize.css": "^3.0.3",
     "react": "^0.14.2",
+    "react-components": "^0.4.0",
     "react-dom": "^0.14.2",
     "react-redux": "^4.0.0",
     "react-router": "^1.0.0",

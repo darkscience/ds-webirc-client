@@ -1,4 +1,4 @@
-const Channels = {
+const ChannelActions = {
   activate(channel) {
     return { type: 'channel:activate', channel };
   },
@@ -17,7 +17,12 @@ const Channels = {
 
   parted(channel, nick) {
     return { type: 'channel:parted', channel, nick };
+  },
+
+  names(channel, names) {
+    const displayNames = _.map(names, (mode, nick) => `${mode}${nick}`);
+    return { type: 'channel:names', channel, names: displayNames };
   }
 };
 
-export default Channels;
+export default ChannelActions;

@@ -3,22 +3,23 @@ Events
 
 Note that `message` below is typically the whole line as received over TCP.
 
+Done
  - registered(message)
- - motd(motd)
  - join(channel, nick, message)
  - part(channel, nick, message)
  - message(from, to, text, message)
- - pm(from, text, message)
  - nick(oldNick, newNick, channels, message)
+ - motd(motd)
  - notice(from, to, text, message)
+
+Todo
+ - pm(from, text, message)
  - topic(channel, topic, nick)
  - names(channel, users)
-
  - +mode(args[0]?, nick, mode, user, message) // users
  - +mode(args[0]?, nick, mode, modeArg, message) // channels
  - -mode(args[0]?, nick, mode, user, message) // users
  - -mode(args[0]?, nick, mode, modeArg, message) // channels
-
  - whois(whoisData)
  - channellist(channelList)
  - kick(channel, nick, kicker, reason)
@@ -26,3 +27,4 @@ Note that `message` below is typically the whole line as received over TCP.
  - invite(channel, from, message)
  - quit(nick, reason, channels, message)
  - error(message)
+ - raw?! (dangerous?)

@@ -1,10 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Users from '../actions/users';
+import classnames from 'classnames';
+import TimeAgo from 'react-components/timeago';
+import UserActions from '../actions/users';
+import ChannelActions from '../actions/channels';
 
 class ChatBase extends React.Component {
   constructor() {
     super();
+  }
+
+  componentDidUpdate() {
+    // TODO: Enable/disable autoscroll depending on whether the user has
+    // manually adjusted the scrollbar (i.e., we've scrolled up before being
+    // scrolled all the way back down the the bottom).
+    this.refs.messages.scrollTop = this.refs.messages.scrollHeight;
   }
 
   renderUsers() {
@@ -12,12 +22,10 @@ class ChatBase extends React.Component {
       <p className="help-block">There's nobody here! (Not even you!)</p>
     </div>;
 
-    if (this.props.users.size > 0) {
+    if (this.props.names.size > 0) {
       content = <div className="list-group">
-        {this.props.users.map(user =>
-          <div className="list-group-item" key={user.nick}>
-            {user.nick}
-          </div>)}
+        {this.props.names.map(name =>
+          <div className="list-group-item" key={name}>{name}</div>)}
       </div>;
     }
 
@@ -29,15 +37,42 @@ class ChatBase extends React.Component {
     </div>;
   }
 
+  renderMessageGutter(msg) {
+    const time = msg.time.format("HH:mm:ss");
+    const nick = msg.type == 'notice' ? `-${msg.from}-` : msg.from;
+//          <TimeAgo time={msg.time} />
+    return <div className="message-gutter">
+      <div className="message">
+        <span className="nick">{nick}</span>
+        <time datetime={msg.time.toISOString()} className="timestamp">
+          {time}
+        </time>
+      </div>
+    </div>;
+  }
+
+  renderMessages() {
+    return <div className="messages">
+      {this.props.messages.map(m => {
+        const cls = classnames({
+          'message-container': true,
+          'message-type-notice': m.type == 'notice',
+        });
+        return <div className={cls}>
+          {this.renderMessageGutter(m)}
+          <p className="message">{m.text}</p>
+        </div>;
+      })}
+    </div>;
+  }
+
   renderMessagePane() {
     return <div className="panel panel-default">
       <div className="panel-heading">
         <h3 className="panel-title">{this.props.channel.get('topic')}</h3>
       </div>
-      <div className="panel-body">
-        <ul className="list-unstyled">{this.props.messages.map(message =>
-          <li key={message.id}>[{message.from}] {message.text}</li>
-        )}</ul>
+      <div ref="messages" className="panel-body messages-container">
+        {this.renderMessages()}
       </div>
       <div className="panel-footer">
         <div className="input-group">
@@ -73,7 +108,9 @@ class ChatBase extends React.Component {
     args = args.slice(1);
 
     const handlers = {
-      nick: this.props.changeNick
+      nick: this.props.changeNick,
+      join: this.props.joinChannel,
+      part: this.props.partChannel
     };
 
     handlers[cmd] && handlers[cmd].apply(null, args);
@@ -81,7 +118,7 @@ class ChatBase extends React.Component {
   }
 
   render() {
-    return <div>
+    return <div className="chat">
       <div className="col-sm-10">
         {this.renderMessagePane()}
       </div>
@@ -110,7 +147,15 @@ const actionCreators = {
   },
 
   changeNick(nick) {
-    return Users.changeNick(nick);
+    return UserActions.changeNick(nick);
+  },
+
+  joinChannel(channel) {
+    return ChannelActions.join(channel);
+  },
+
+  partChannel(channel) {
+    return ChannelActions.part(channel);
   }
 };
 
@@ -121,11 +166,20 @@ const Chat = connect(state => {
     nick: state.get('nick'),
     message: state.get('message'),
     messages: state.get('messages')
-      .filter(m => m.get('to') == channel.get('name'))
+      .filter(m => {
+        if (m.get('type') == 'notice') {
+          return true;
+        }
+        else if (m.get('type') == 'network') {
+          return m.get('type') == 'network';
+        }
+        else if (m.get('type') == 'channel') {
+          return m.get('to') == channel.get('name');
+        }
+      })
       .toJS(),
-    users: channel.get('users')
+    names: channel.get('names')
   };
-  console.table(res.messages);
   return res;
 }, actionCreators)(ChatBase);
 
