@@ -1,0 +1,3 @@
+ - Split the channel and user lists into components
+ - Rename Chat to MessagePane or something suitable
+ - Wire up all the events from the server/client
